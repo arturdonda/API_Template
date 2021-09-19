@@ -9,6 +9,5 @@ declare namespace NodeJS {
 		REFRESH_TOKEN_EXPIRATION_IN_DAYS: number;
 		ACCESS_TOKEN_EXPIRATION_IN_MINUTES: number;
 		IPDATA_KEY: string;
-		LOG_ROCKET_SECRET: string;
 	}
 }

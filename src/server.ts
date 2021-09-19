@@ -3,9 +3,6 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import routes from './routes';
 import apiResponse from './middlewares/apiResponse';
-import LogRocket from 'logrocket';
-
-LogRocket.init(process.env.LOG_ROCKET_SECRET);
 
 const app = express();
 
