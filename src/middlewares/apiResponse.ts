@@ -14,5 +14,9 @@ export default <T extends Object | null>(
 		result: response?.result ?? null,
 	};
 
+	console.log('req.ip: ', req.ip);
+	console.log('req.socket.localAddress: ', req.socket.localAddress);
+	console.log('req.socket.remoteAddress: ', req.socket.remoteAddress);
+
 	return res.status(safeResponse.status.code).send(safeResponse);
 };
