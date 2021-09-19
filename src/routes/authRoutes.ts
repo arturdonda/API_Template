@@ -13,7 +13,7 @@ import {
 const router = Router();
 
 router.post('/register', validateRegisterBody, (req, res, next) => {
-	return createUser(req.body, req.ip)
+	return createUser(req.body, req.socket.remoteAddress ?? '0.0.0.0')
 		.then(({ user, refreshToken, accessToken }) => {
 			setRefreshTokenCookie(res, refreshToken);
 			setAccessTokenHeader(res, accessToken);
@@ -24,7 +24,7 @@ router.post('/register', validateRegisterBody, (req, res, next) => {
 });
 
 router.post('/login', validateLoginBody, (req, res, next) => {
-	return loginUser(req.body.email, req.body.password, req.ip)
+	return loginUser(req.body.email, req.body.password, req.socket.remoteAddress ?? '0.0.0.0')
 		.then(({ user, refreshToken, accessToken }) => {
 			setRefreshTokenCookie(res, refreshToken);
 			setAccessTokenHeader(res, accessToken);
