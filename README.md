@@ -29,7 +29,7 @@ You will need these things setup before you continue:
 
 ## Installing
 
-First we need to get a copy of this project in your local computer. You can either clone, fork or download this repository.
+First we need to get a copy of this project in your local computer. You can either fork or download this repository.
 
 After having the project folder on your local machine, open it on a code editor of your choosing, and run the following command:
 
