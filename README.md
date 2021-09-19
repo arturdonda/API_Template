@@ -5,19 +5,13 @@ This project is a template for NodeJS API with user authentication via Refresh T
 # Table of Contents <!-- omit in toc -->
 
 - [Getting Started](#getting-started)
-	- [Prerequisites](#prerequisites)
 	- [Installing](#installing)
 	- [Env Variables](#env-variables)
-	- [Usage](#usage)
-	- [Built With](#built-with)
-	- [Authors](#authors)
-	- [License](#license)
+- [Usage](#usage)
+- [Built With](#built-with)
+- [License](#license)
 
-# Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
-## Prerequisites
+# What you'll need <!-- omit in toc -->
 
 You will need these things setup before you continue:
 
@@ -26,6 +20,10 @@ You will need these things setup before you continue:
 -  Be familiar with Node and [NPM][npm-url] ecosystem
 -  A [MongoDB][mongodb-url] account
 -  An [IpData][ipdata-url] account
+
+# Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ## Installing
 
@@ -44,39 +42,39 @@ This will install all the projects dependencies. Go make some coffee ☕, it may
 Now, we'll need to add our secrets (sensitive data that cannot be explicit within our code, but are required to run the project). Therefore, we will store them as environment variables. Create a `.env` file in the root directory and paste the following lines:
 
 ```
-ENV_NAME = local								// This will define that we are running this project locally
-PORT = <value>									// The port in wich we'll be running our server
-ISSUER = <value>								// Issuer should be your website URL. This will be used for JWT
-MONGODB_URL = <value>							// You MongoDB connection string
-REFRESH_TOKEN_SECRET = <value>					// The secret used to generate and validate your Refresh tokens
-ACCESS_TOKEN_SECRET = <value>					// The secret used to generate and validate your Access tokens
-REFRESH_TOKEN_EXPIRATION_IN_DAYS = <value>		// The number of days your Refresh token will be valid
+ENV_NAME = local				// This will define that we are running this project locally
+PORT = <value>					// The port in wich we'll be running our server
+ISSUER = <value>				// Issuer should be your website URL. This will be used for JWT
+MONGODB_URL = <value>				// You MongoDB connection string
+REFRESH_TOKEN_SECRET = <value>			// The secret used to generate and validate your Refresh tokens
+ACCESS_TOKEN_SECRET = <value>			// The secret used to generate and validate your Access tokens
+REFRESH_TOKEN_EXPIRATION_IN_DAYS = <value>	// The number of days your Refresh token will be valid
 ACCESS_TOKEN_EXPIRATION_IN_MINUTES = <value>	// The number of minutes your Access token will be valid
-IPDATA_KEY = <value>							// Your IpData secret key
+IPDATA_KEY = <value>				// Your IpData secret key
 ```
 
 Replace the `<value>` with the actual values for the environment variables.
 
-## Usage
+# Usage
 
 Now that the setup is complete, you can start playing with it!
 
-To run the project on development mode, run the following command on your terminal:
+To run the project on **development** mode, run the following command on your terminal:
 
 ```bash
 $ npm run dev
 ```
 
-Or you can run the following commands to run it on production mode:
+Or you can run the following commands to run it on **production** mode:
 
 ```bash
 $ npm run build
 $ npm run start
 ```
 
-## Built With
+# Built With
 
-This project was built with the MERN Stack.
+Built with ❤️ by Artur Donda. Also, this project was built using MERN Stack:
 
 -  **M**ongoDB - document database
 -  **E**xpressJS - Node.js web framework
@@ -85,15 +83,9 @@ This project was built with the MERN Stack.
 
 > Obviously ReactJS ⚛️ is used only on the front-end part of this project
 
-## Authors
+# License
 
-Built with ❤️ by Artur Donda
-
-See also the list of [contributors][contributors-url] who participated in this project.
-
-## License
-
-This project is licensed under the **Proprietary License** - see the [LICENSE.md](LICENSE.md) file for details
+Licensed under [MIT](LICENSE)
 
 [meucondominio-url]: https://meucondomin.io
 [vscode-url]: https://code.visualstudio.com/
