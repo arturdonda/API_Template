@@ -4,8 +4,8 @@ const router = Router();
 
 router.get('/', (req, res, next) =>
 	next(
-		createApiResponse('OK', 'Welcome to MeuCondominio_API', {
-			api: 'MeuCondominio API',
+		createApiResponse('OK', 'Welcome to NodeJS API Template', {
+			api: 'API Template',
 			version: '0.0.1',
 		})
 	)
