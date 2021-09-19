@@ -6,16 +6,18 @@ import apiResponse from './middlewares/apiResponse';
 
 const app = express();
 
-//Configuring Middlewares
+// Configuring Proxy
+app.set('trust proxy', true);
+
+// Configuring Middlewares
 app.use(express.json());
-// app.use(express.urlencoded({extended: true})); //what for?
 app.use(cookieParser());
 
-//Importing routes
+// Importing routes
 app.use('/api', routes);
 
-//Standardizing API Response
+// Standardizing API Response
 app.use(apiResponse);
 
-//Starting Server
+// Starting Server
 app.listen(process.env.PORT, () => console.log(`[Server]: ⚡️ Running on port ${process.env.PORT}`));
