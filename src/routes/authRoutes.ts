@@ -1,33 +1,32 @@
 import { Router } from 'express';
 import createApiResponse from '../utils/createApiResponse';
 import authorize from '../middlewares/authorize';
-import { validateRegisterBody, validateLoginBody, validateRefreshTokenBody } from '../middlewares/validateBody';
-import { createUser, loginUser } from '../controllers/userController';
-import {
-	generateAccessToken,
-	revokeRefreshToken,
-	setAccessTokenHeader,
-	setRefreshTokenCookie,
-} from '../controllers/tokenController';
+import validateBody from '../middlewares/validateBody';
+import userController from '../controllers/userController';
+import tokenController from '../controllers/tokenController';
 
 const router = Router();
 
-router.post('/register', validateRegisterBody, (req, res, next) => {
-	return createUser(req.body, req.ip)
-		.then(({ user, refreshToken, accessToken }) => {
-			setRefreshTokenCookie(res, refreshToken);
-			setAccessTokenHeader(res, accessToken);
-
-			return next(createApiResponse('Created', 'Usuário criado com sucesso', user));
-		})
+router.post('/signup', validateBody.register, (req, res, next) => {
+	return userController
+		.create(req.body.username, req.body.email, req.body.password, req.ip)
+		.then(user => next(createApiResponse('Created', 'Usuário criado com sucesso', user)))
 		.catch(error => next(error));
 });
 
-router.post('/login', validateLoginBody, (req, res, next) => {
-	return loginUser(req.body.email, req.body.password, req.ip ?? '0.0.0.0')
+router.get('/confirm/:confirmationCode', (req, res, next) => {
+	return userController
+		.activate(req.params.confirmationCode)
+		.then(result => next(createApiResponse('OK', 'Conta ativada com sucesso', null)))
+		.catch(error => next(error));
+});
+
+router.post('/login', validateBody.login, (req, res, next) => {
+	return userController
+		.login(req.body.username, req.body.password, req.ip ?? '0.0.0.0')
 		.then(({ user, refreshToken, accessToken }) => {
-			setRefreshTokenCookie(res, refreshToken);
-			setAccessTokenHeader(res, accessToken);
+			tokenController.setRefreshTokenCookie(res, refreshToken);
+			tokenController.setAccessTokenHeader(res, accessToken);
 
 			return next(createApiResponse('OK', 'Usuário logado com sucesso', user));
 		})
@@ -35,16 +34,18 @@ router.post('/login', validateLoginBody, (req, res, next) => {
 });
 
 router.get('/refresh-token', (req, res, next) => {
-	return generateAccessToken(req.cookies['refreshToken'])
+	return tokenController
+		.generateAccessToken(req.cookies['refreshToken'])
 		.then(accessToken => {
-			setAccessTokenHeader(res, accessToken);
-			return next(createApiResponse('Created', 'Access Token gerado com sucesso', accessToken));
+			tokenController.setAccessTokenHeader(res, accessToken);
+			return next(createApiResponse('Created', 'Token de acessso gerado com sucesso', accessToken));
 		})
 		.catch(error => next(error));
 });
 
 router.get('/logout', authorize, (req, res, next) => {
-	return revokeRefreshToken(req.cookies['refreshToken'], req.userId, req.ip)
+	return tokenController
+		.revokeRefreshToken(req.cookies['refreshToken'], req.userId, req.ip)
 		.then(() => {
 			res.cookie('refreshToken', undefined);
 			res.header('authorization', undefined);
@@ -54,8 +55,9 @@ router.get('/logout', authorize, (req, res, next) => {
 		.catch(error => next(error));
 });
 
-router.post('/revoke-token', authorize, validateRefreshTokenBody, (req, res, next) => {
-	return revokeRefreshToken(req.body.refreshToken, req.userId, req.ip)
+router.post('/revoke-token', authorize, validateBody.refreshToken, (req, res, next) => {
+	return tokenController
+		.revokeRefreshToken(req.body.refreshToken, req.userId, req.ip)
 		.then(() => next(createApiResponse('OK', 'Sessão encerrada com sucesso', null)))
 		.catch(error => next(error));
 });

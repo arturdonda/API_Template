@@ -4,7 +4,7 @@ import { Response } from 'express';
 import createApiResponse from '../utils/createApiResponse';
 import { getIpInfo } from '../utils/ipData';
 
-export const generateRefreshToken = async (userId: IdType, ipAddress: string) => {
+const generateRefreshToken = async (userId: IdType, ipAddress: string) => {
 	const ipInfo = await getIpInfo(ipAddress);
 
 	const refreshToken = await db.RefreshToken.create({
@@ -21,7 +21,7 @@ export const generateRefreshToken = async (userId: IdType, ipAddress: string) =>
 	return refreshToken.token;
 };
 
-export const generateAccessToken = async (refreshToken: string) => {
+const generateAccessToken = async (refreshToken: string) => {
 	const rToken = await getRefreshToken(refreshToken);
 
 	if (!rToken.isActive) throw createApiResponse('Bad Request', 'Refresh Token is inactive', null);
@@ -33,7 +33,7 @@ export const generateAccessToken = async (refreshToken: string) => {
 	});
 };
 
-export const getRefreshToken = async (refreshToken: string) => {
+const getRefreshToken = async (refreshToken: string) => {
 	const rToken = await db.RefreshToken.findOne({ token: refreshToken });
 
 	if (!rToken) throw createApiResponse('Bad Request', 'No token found', null);
@@ -41,7 +41,7 @@ export const getRefreshToken = async (refreshToken: string) => {
 	return rToken;
 };
 
-export const getSessionsByUserId = async (userId: IdType) => {
+const getSessionsByUserId = async (userId: IdType) => {
 	const refreshTokenList = (await db.RefreshToken.find({ user: userId })).filter(
 		refreshToken => refreshToken.isActive
 	);
@@ -51,7 +51,7 @@ export const getSessionsByUserId = async (userId: IdType) => {
 	return refreshTokenList;
 };
 
-export const revokeRefreshToken = async (refreshToken: string, userId: IdType, ipAddress: string) => {
+const revokeRefreshToken = async (refreshToken: string, userId: IdType, ipAddress: string) => {
 	const rToken = await getRefreshToken(refreshToken);
 	const ipInfo = await getIpInfo(ipAddress);
 
@@ -64,11 +64,21 @@ export const revokeRefreshToken = async (refreshToken: string, userId: IdType, i
 	return;
 };
 
-export const setRefreshTokenCookie = (res: Response, refreshToken: string) =>
+const setRefreshTokenCookie = (res: Response, refreshToken: string) =>
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,
 		expires: new Date(Date.now() + process.env.REFRESH_TOKEN_EXPIRATION_IN_DAYS * 24 * 60 * 60 * 1000),
 	});
 
-export const setAccessTokenHeader = (res: Response, accessToken: string) =>
+const setAccessTokenHeader = (res: Response, accessToken: string) =>
 	res.header('authorization', `Bearer ${accessToken}`);
+
+export default {
+	generateRefreshToken,
+	generateAccessToken,
+	getRefreshToken,
+	getSessionsByUserId,
+	revokeRefreshToken,
+	setRefreshTokenCookie,
+	setAccessTokenHeader,
+};

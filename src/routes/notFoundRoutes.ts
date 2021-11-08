@@ -3,7 +3,7 @@ import createApiResponse from '../utils/createApiResponse';
 const router = Router();
 
 router.use(`*`, (req, res, next) =>
-	next(createApiResponse('Not Found', `No route found for method ${req.method} on '${req.path}'`, null))
+	next(createApiResponse('Not Found', `Nenhuma rota encontrada para o método ${req.method} em '${req.path}'`, null))
 );
 
 export default router;

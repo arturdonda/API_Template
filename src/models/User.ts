@@ -1,14 +1,17 @@
 import { Document } from 'mongoose';
 
 export interface IUser extends Document {
-	name: string;
-	nickname: string;
-	rg: string;
-	cpf: string;
-	gender: string;
-	birthday: Date;
+	address?: string;
+	birthday?: Date;
+	confirmationCode: string;
+	cpf?: string;
+	createDate: Date;
 	email: string;
+	gender?: 'M' | 'F' | 'O';
+	name?: string;
 	password: string;
-	phone: string;
-	address: string;
+	phone?: string;
+	rg?: string;
+	status: 'Pending' | 'Active';
+	username: string;
 }

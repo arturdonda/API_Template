@@ -4,12 +4,11 @@ import { isEmailValid } from '../utils/validation';
 
 const UserSchema: Schema = new Schema(
 	{
-		name: { type: String, required: true },
-		nickname: { type: String, unique: true, required: true },
-		rg: { type: String, unique: true, required: true },
-		cpf: { type: String, unique: true, required: true },
-		gender: { type: String, uppercase: true, enum: ['M', 'F', 'O'], required: true },
-		birthday: { type: Date, required: true },
+		address: { type: String },
+		birthday: { type: Date },
+		confirmationCode: { type: String, unique: true },
+		cpf: { type: String, unique: true },
+		createDate: { type: Date, default: Date.now() },
 		email: {
 			type: String,
 			lowercase: true,
@@ -17,10 +16,13 @@ const UserSchema: Schema = new Schema(
 			required: true,
 			validate: [isEmailValid, 'invalid e-mail'],
 		},
+		gender: { type: String, uppercase: true, enum: ['M', 'F', 'O'] },
+		name: { type: String },
 		password: { type: String, required: true, min: 6 },
-		phone: { type: String, required: true },
-		address: { type: String, required: true },
-		createDate: { type: Date, default: Date.now() },
+		phone: { type: String },
+		rg: { type: String, unique: true },
+		status: { type: String, enum: ['Pending', 'Active'], default: 'Pending' },
+		username: { type: String, unique: true, required: true },
 	},
 	{
 		toJSON: {
