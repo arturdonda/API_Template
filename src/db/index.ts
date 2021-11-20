@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import User from './User';
 import RefreshToken from './RefreshToken';
+import ResetPasswordToken from './ResetPasswordToken';
 
 mongoose
 	.connect(`${process.env.MONGODB_URL}`)
@@ -28,5 +29,6 @@ export type IdType = string | number | mongoose.Types.ObjectId;
 export default {
 	User,
 	RefreshToken,
+	ResetPasswordToken,
 	isValidId,
 };

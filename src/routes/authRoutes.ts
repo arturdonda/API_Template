@@ -9,7 +9,7 @@ const router = Router();
 
 router.post('/signup', validateBody.register, (req, res, next) => {
 	return userController
-		.create(req.body.username, req.body.email, req.body.password, req.ip)
+		.create(req.body.username, req.body.email, req.body.password)
 		.then(user => next(createApiResponse('Created', 'Usuário criado com sucesso', user)))
 		.catch(error => next(error));
 });
@@ -59,6 +59,20 @@ router.post('/revoke-token', authorize, validateBody.refreshToken, (req, res, ne
 	return tokenController
 		.revokeRefreshToken(req.body.refreshToken, req.userId, req.ip)
 		.then(() => next(createApiResponse('OK', 'Sessão encerrada com sucesso', null)))
+		.catch(error => next(error));
+});
+
+router.post('/reset', validateBody.resetPassword, (req, res, next) => {
+	return userController
+		.resetPasswordRequest(req.body.email)
+		.then(() => next(createApiResponse('OK', 'Email enviado com o link para resetar a sua senha', null)))
+		.catch(error => next(error));
+});
+
+router.post('/reset/:resetToken', validateBody.changePassword, (req, res, next) => {
+	return userController
+		.resetPassword(req.params.resetToken, req.body.password)
+		.then(() => next(createApiResponse('OK', 'Senha alterada com sucesso', null)))
 		.catch(error => next(error));
 });
 

@@ -1,4 +1,5 @@
 export * from './HttpResponse';
-export * from './User';
-export * from './RefreshToken';
 export * from './IpData';
+export * from './RefreshToken';
+export * from './ResetPasswordToken';
+export * from './User';

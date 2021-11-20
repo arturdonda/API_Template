@@ -4,7 +4,7 @@ import db, { IdType } from '../db';
 import { IUser } from '../models';
 import tokenController from './tokenController';
 import createApiResponse from '../utils/createApiResponse';
-import { sendConfirmationEmail } from '../utils/emailSender';
+import { sendAccountConfirmationEmail, sendPasswordChangeConfirmationEmail, sendPasswordChangeRequestEmail } from '../utils/emailSender';
 
 const getById = async (userId: IdType) => await db.User.findById(userId).exec();
 
@@ -18,7 +18,7 @@ const getByRg = async (rg: string) => await db.User.findOne({ rg: rg }).exec();
 
 const getAll = async () => await db.User.find().exec();
 
-const create = async (username: string, email: string, password: string, ipAddress: string) => {
+const create = async (username: string, email: string, password: string) => {
 	if (await getByEmail(email)) throw createApiResponse('Bad Request', 'Email já cadastrado', null);
 	if (await getByUsername(username)) throw createApiResponse('Bad Request', 'Nome de usuário já cadastrado', null);
 
@@ -29,7 +29,7 @@ const create = async (username: string, email: string, password: string, ipAddre
 		password: bcrypt.hashSync(password, 10),
 	});
 
-	await sendConfirmationEmail(user.username, user.email, user.confirmationCode);
+	await sendAccountConfirmationEmail(user.username, user.email, user.confirmationCode);
 
 	return user;
 };
@@ -82,6 +82,52 @@ const update = async (userId: string, updatedUser: IUser) => {
 	);
 };
 
+const updatePassword = async (userId: string, password: string) => {
+	const user = await getById(userId);
+
+	if (!user) throw createApiResponse('Bad Request', 'Usuário não localizado', null);
+	if (bcrypt.compareSync(password, user.password)) throw createApiResponse('Bad Request', 'A nova senha não pode ser a mesma que a anterior.', null);
+
+	await sendPasswordChangeConfirmationEmail(user.name ?? user.username, user.email);
+
+	return db.User.findByIdAndUpdate(
+		{ _id: userId },
+		{
+			$set: {
+				password: bcrypt.hashSync(password, 10),
+			},
+		},
+		{ new: true }
+	);
+};
+
+const resetPasswordRequest = async (email: string) => {
+	const user = await getByEmail(email);
+
+	if (!user) return;
+
+	const resetPasswordToken = await db.ResetPasswordToken.create({
+		user: user.id,
+		token: jwt.sign({}, process.env.RESET_PASSWORD_TOKEN_SECRET, {
+			expiresIn: `${process.env.RESET_PASSWORD_TOKEN_EXPIRATION_IN_MINUTES}m`,
+			issuer: process.env.ISSUER,
+			audience: user.id,
+		}),
+		expiredAt: new Date(Date.now() + process.env.RESET_PASSWORD_TOKEN_EXPIRATION_IN_MINUTES * 60 * 1000),
+	});
+	await sendPasswordChangeRequestEmail(email, resetPasswordToken.token);
+
+	return;
+};
+
+const resetPassword = async (resetToken: string, password: string) => {
+	const resetPasswordToken = await db.ResetPasswordToken.findOne({ token: resetToken }).exec();
+
+	if (!resetPasswordToken || resetPasswordToken.isExpired) throw createApiResponse('Bad Request', 'Link inválido ou expirado', null);
+
+	return updatePassword(`${resetPasswordToken.user}`, password);
+};
+
 export default {
 	getById,
 	getByEmail,
@@ -93,4 +139,7 @@ export default {
 	activate,
 	login,
 	update,
+	resetPasswordRequest,
+	resetPassword,
+	updatePassword,
 };

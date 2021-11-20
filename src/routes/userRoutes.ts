@@ -38,6 +38,13 @@ router.post('/me', authorize, validateBody.userOptionalInfo, (req, res, next) =>
 		.catch(error => next(error))
 );
 
+router.post('/password', authorize, validateBody.changePassword, (req, res, next) =>
+	userController
+		.updatePassword(req.userId, req.body.password)
+		.then(user => next(createApiResponse('OK', 'Senha alterada com sucesso', user)))
+		.catch(error => next(error))
+);
+
 router.get('/:id', authorize, (req, res, next) =>
 	userController
 		.getById(req.params.id)

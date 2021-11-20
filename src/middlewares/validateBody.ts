@@ -8,6 +8,8 @@ export default {
 	login: (req: Request, res: Response, next: NextFunction) => validateBody(loginSchema, req.body, next),
 	refreshToken: (req: Request, res: Response, next: NextFunction) => validateBody(refreshTokenSchema, req.body, next),
 	userOptionalInfo: (req: Request, res: Response, next: NextFunction) => validateBody(userOptionalInfoSchema, req.body, next),
+	changePassword: (req: Request, res: Response, next: NextFunction) => validateBody(changePasswordSchema, req.body, next),
+	resetPassword: (req: Request, res: Response, next: NextFunction) => validateBody(resetPasswordSchema, req.body, next),
 };
 
 const validateBody = (schema: joi.ObjectSchema, body: any, next: NextFunction) => {
@@ -114,4 +116,13 @@ const userOptionalInfoSchema = joi.object({
 	name: nameValidation.optional().allow(null),
 	phone: phoneValidation.optional().allow(null),
 	rg: rgValidation.optional().allow(null),
+});
+
+const changePasswordSchema = joi.object({
+	password: passwordValidation.required(),
+	passwordConfirmation: joi.string().required().valid(joi.ref('password')).error(new Error('As senhas não conferem.')),
+});
+
+const resetPasswordSchema = joi.object({
+	email: emailValidation.required(),
 });
