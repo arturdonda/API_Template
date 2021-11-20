@@ -1,6 +1,6 @@
 # Template API <!-- omit in toc -->
 
-This project is a template for NodeJS API with user authentication via Refresh Tokens (JWT).
+This project is a template for NodeJS API with JWT user authentication and email verification.
 
 # Table of Contents <!-- omit in toc -->
 
